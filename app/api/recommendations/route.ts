@@ -1,0 +1,5 @@
+import { NextResponse } from 'next/server';
+import { demoMovies } from '@/lib/demoContent';
+export async function GET(req:Request){const {searchParams}=new URL(req.url);const q=(searchParams.get('q')||'').toLowerCase();const key=process.env.TMDB_API_KEY;
+ if(key){try{const r=await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${key}&language=en-US&page=1`,{next:{revalidate:3600}});if(r.ok){const d=await r.json();const items=(d.results||[]).slice(0,8).map((m:any)=>({id:`movie-${m.id}`,type:'movie',category:'Entertainment',title:m.title,description:m.overview||'A recommended movie.',image:m.poster_path?`https://image.tmdb.org/t/p/w780${m.poster_path}`:demoMovies[0].image,source:'TMDB recommendation',url:`https://www.themoviedb.org/movie/${m.id}`,date:m.release_date||new Date().toISOString(),tag:'MOVIE PICK'}));return NextResponse.json({items});}}catch{/* Use demo fallback below. */}}
+ const items=demoMovies.filter(x=>!q||`${x.title} ${x.description}`.toLowerCase().includes(q));return NextResponse.json({items:items.length?items:(!q?demoMovies:[]),mode:'demo'});}

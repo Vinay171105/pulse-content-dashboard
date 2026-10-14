@@ -1,0 +1,4 @@
+import { fireEvent,render,screen } from '@testing-library/react';
+import { ContentCard } from '@/components/ContentCard';
+const item={id:'n1',type:'news' as const,category:'Technology',title:'A useful headline',description:'A short description',image:'https://images.unsplash.com/photo-1',source:'Demo News',url:'https://example.com',date:'2026-10-14T00:00:00.000Z'};
+describe('ContentCard',()=>{it('renders headline and source',()=>{render(<ContentCard item={item} favorite={false} onFavorite={()=>{}}/>);expect(screen.getByText('A useful headline')).toBeInTheDocument();expect(screen.getByText('Demo News')).toBeInTheDocument();});it('fires favorite action',()=>{const fn=jest.fn();render(<ContentCard item={item} favorite={false} onFavorite={fn}/>);fireEvent.click(screen.getByRole('button',{name:'Add to favorites'}));expect(fn).toHaveBeenCalledTimes(1);});});
